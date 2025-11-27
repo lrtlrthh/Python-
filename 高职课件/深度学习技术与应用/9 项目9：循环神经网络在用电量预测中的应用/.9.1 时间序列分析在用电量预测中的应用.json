@@ -1,0 +1,176 @@
+[{
+		"hint": [
+			"您可以使用函数open打开。\n"
+		],
+		"answer": [
+			"with open(path) as f:\n",
+			"    display(f.readline())\n"
+		]
+	},
+	{
+		"hint": [
+			"利用with关键字打开，使用readlines函数\n"
+		],
+		"answer": [
+			"#建立一个列表存放数据\n",
+            "contents = []\n",
+            "#使用关键字with在不需要访问文件时将其关闭\n",
+            "with open(path,'r') as f:\n",
+            "    \n",
+            "        # TODO 1\n",
+            "        # 移除下方的 'pass' 声明\n",
+            "        # 输入你自己的代码\n",
+            "        contents=f.readlines()\n",
+            "#显示样本数目\n",
+            "display(len(contents))\n",
+            "#显示前十条数据\n",
+            "display(contents[:10])"
+		]
+	},
+	{
+		"hint": [
+			"利用strip和split函数\n"
+		],
+		"answer": [
+			"#首先去除换行符\n",
+			"content1 = contents[1].strip()\n",
+			"#通过;进行分割\n",
+			"content1_Voltage = content1.split(';')[4]\n",
+			"#显示电压值\n",
+			"display(content1_Voltage)"
+		]
+	},
+	{
+		"hint": [
+			"您可以用isnull函数判断缺失值位置。\n"
+		],
+		"answer": [
+			"#建立字典用来储存数据\n",
+			"Null = {}\n",
+			"for i in df.columns:\n",
+			"#显示各特征为缺失值的index\n",
+			"    Null[i] = df[i].isnull().index\n",
+			"#为了便于查看，把字典格式装换成DataFrame格式\n",
+			"Null_df = pd.DataFrame(Null)\n",
+			"#显示前十条数据\n",
+			"Null_df.head(10)"
+		]
+	},
+	{
+		"hint": [
+			"我们可以考虑特征值的类别进行选择。\n"
+		],
+		"answer": [
+			"如果空值是数值型的，就根据该属性在其他所有对象的取值的平均值来填充该缺失的属性值；如果空值是非数值型的，就根据统计学中的众数原理\n"
+		]
+	},
+	{
+		"hint": [
+			"利用sample函数进行采样，利用subplot添加子图。\n"
+		],
+		"answer": [
+			"# 下面我们比较对不同特征以天进行重采样的数值\n",
+			"cols = [0, 1, 2, 3, 5, 6]\n",
+			"i = 1\n",
+			"groups = cols\n",
+			"#统计以天进行重采样的平均值\n",
+			"values = df.resample('D').mean().values\n",
+			"#对每个column进行绘图\n",
+			"plt.figure(figsize = (15, 10))\n",
+			"for group in groups:\n",
+			"    #对每个特征添加子图\n",
+			"\tplt.subplot(len(cols), 1, i)\n",
+			"    #进行绘图\n",
+			"\tplt.plot(values[:, group])\n",
+			"    #添加标题\n",
+			"\tplt.title(df.columns[group], y=0.75, loc='right')\n",
+			"    #更换子图位置\n",
+			"\ti += 1\n",
+			"plt.show()"
+		]
+	},
+	{
+		"hint": [
+			"利用shift函数进行移动，用concat对数据进行合并。\n"
+		],
+		"answer": [
+			"#建立列表进行存储数据\n",
+			"columns = []\n",
+			"col_name = []\n",
+			"#把数据向前移动，统计前三小时的数据\n",
+			"for i in range(3,0,-1):\n",
+			"    #对'Global_active_power'进行移动\n",
+			"    df_active_power = df['Global_active_power'].resample('h').mean().shift(i)\n",
+			"    #append之前的数据\n",
+			"    columns.append(df_active_power)\n",
+			"    #修改column名\n",
+			"    col_name += ['Global_active(t-%d)'%i]\n",
+			"#获取未来两小时的数据\n",
+			"for i in range(0,2):\n",
+			"    #对'Global_active_power'进行移动\n",
+			"    df_active_power = df['Global_active_power'].resample('h').mean().shift(-i)\n",
+			"    #append之前的数据\n",
+			"    columns.append(df_active_power)\n",
+			"    #修改column名\n",
+			"    if i==0:\n",
+			"        col_name += ['Global_activer(t)']\n",
+			"    else:\n",
+			"        \n",
+			"        col_name += ['Global_active(t+%d)'%i]\n",
+			"#对数据进行合并    \n",
+			"data_active_power = pd.concat(columns,axis=1)\n",
+			"#重置columns名\n",
+			"data_active_power.columns = col_name\n",
+			"#显示数据\n",
+			"display(data_active_power)  "
+		]
+	},
+	{
+		"hint": [
+			"更改series_to_supervised的参数，丢失一些不需要的列\n"
+		],
+		"answer": [
+			" n_in=2, n_out=2， 因为我们只需要预测'Global_active_power'，其他特征就需要丢弃\n",
+			"，丢弃的columns为[8,9,10,11,12,13,15,16,17,18,19,20]。\n"
+		]
+	},
+		{
+		"hint": [
+			"查阅reshape函数的用法\n"
+		],
+		"answer": [
+			    "\n",
+			"#对样本集拆分成训练集和测试集\n",
+			"values = reframed.values\n",
+			"n_train_time = 365*24*3\n",
+			"train = values[:n_train_time, :]\n",
+			"test = values[n_train_time:, :]\n",
+			"\n",
+			"train_X, train_y = train[:, :-1], train[:, -1]\n",
+			"test_X, test_y = test[:, :-1], test[:, -1]\n",
+			"# 把数据转换为3维\n",
+			"train_X = train_X.reshape((train_X.shape[0], 1, train_X.shape[1]))\n",
+			"test_X = test_X.reshape((test_X.shape[0], 1, test_X.shape[1]))\n",
+			"print(train_X.shape, train_y.shape, test_X.shape, test_y.shape) \n"
+		]
+	},
+	{
+		"hint": [
+			"机器学习中的分类和回归问题的评估指标不同。\n"
+		],
+		"answer": [
+			"回归问题的评价指标:通常用相对／绝对误差，平均绝对误差，均方误差，均方根误差等指标来衡量\n",
+			"分类问题的评价指标：准确率，精确率，召回率，ROC曲线，混淆矩阵\n"
+		]
+	},
+	{
+		"hint": [
+			"召回率是指查全率，精确率表示查准率\n"
+		],
+		"answer": [
+			"准确率只能反映预测正确的概率，但我们有时更加关心的是查全率和查准率，比如我们预测病人得癌症的情况，我们会考虑预测得癌症的人中真正得\n",
+			"癌症的概率，真正得癌症的人预测为得癌症的概率这些问题，这样准确率就不满足了，就需要其他的性能度量指标。"
+
+		]
+	}
+]

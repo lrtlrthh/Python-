@@ -1,0 +1,37 @@
+[{
+		"hint": [
+			"标签数目应该是所有英文字符和数字的总数再加上一个未知符。\n"
+		],
+		"answer": [
+			"n_class = len(characters)+1\n"
+		]
+	},
+	{
+		"hint": [
+			"for i in range(3):\n",
+			"    for j in range(2):\n",
+			"        x = Convolution2D(32*2**i, 3, kernel_initializer='he_uniform')(x)\n",
+			"        x = BatchNormalization()(x)\n",
+			"        x = Activation('relu')(x)\n",
+			"    x = MaxPooling2D((2, 2))(x)"
+		]
+	},
+	{
+		"hint": [
+			"gru_2 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_uniform', name='gru2')(x)\n",
+			"gru_2b = GRU(rnn_size, return_sequences=True, kernel_initializer='he_uniform', \n",
+			"             go_backwards=True, name='gru2_b')(x)\n",
+			"x = concatenate([gru_2, gru_2b])"
+		]
+	},
+	{
+		"hint": [
+			"训练到20代的时候，准确率97.9，训练到40代的时候，准确率99.6%\n"
+		]
+	},
+	{
+		"hint": [
+			"Counter(''.join([characters[i] for i in y_vis[y_vis != out]]))\n"
+		]
+	}
+]
